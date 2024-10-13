@@ -8,7 +8,7 @@ const ExploreScreen = () => {
     const [recognitionResult, setRecognitionResult] = useState(null); // For storing recognition result
 
     const sendImageForRecognition = async (imageUri) => {
-      
+
     };
 
     const onSelectImage = async () => {
@@ -51,6 +51,12 @@ const ExploreScreen = () => {
             <Text>No images selected or taken yet.</Text>
           )}
         </ScrollView>
+
+        {recognitionResult && (
+        <View style={styles.recognitionResult}>
+          <Text>Recognition Result: {JSON.stringify(recognitionResult)}</Text>
+        </View>
+        )}
       </View>
     );
 }
