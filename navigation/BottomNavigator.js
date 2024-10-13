@@ -1,8 +1,8 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import GameBoardScreen from '../Screens/GameBoardScreen';
-import ProfileScreen from '../Screens/ProfileScreen';
+import ExploreScreen from '../screens/ExploreScreen';  
+import ProfileScreen from '../screens/ProfileScreen'; 
 
 const Tab = createBottomTabNavigator();
 
@@ -13,7 +13,7 @@ const BottomTabNavigator = () => (
         let iconName;
         if (route.name === 'Explore') {
           iconName = focused ? 'grid' : 'grid-outline';
-        } else if (route.name === 'Profile') {
+        } else if (route.name === 'User') {
           iconName = focused ? 'person' : 'person-outline';
         }
         return <Ionicons name={iconName} size={size} color={color} />;
@@ -28,8 +28,8 @@ const BottomTabNavigator = () => (
       ],
     })}
   >
-    <Tab.Screen name="Explore" component={GameBoardScreen} />
-    <Tab.Screen name="User" component={ProfileScreen} />
+    <Tab.Screen name="Explore" component={ExploreScreen} />  
+    <Tab.Screen name="User" component={ProfileScreen} />   
   </Tab.Navigator>
 );
 
