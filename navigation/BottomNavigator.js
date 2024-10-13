@@ -1,8 +1,8 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import ExploreScreen from '../screens/ExploreScreen';  
-import ProfileScreen from '../screens/ProfileScreen'; 
+import ExploreScreen from '../screens/ExploreScreen.js';  
+import UserScreen from '../screens/UserScreen'; 
 
 const Tab = createBottomTabNavigator();
 
@@ -18,7 +18,7 @@ const BottomTabNavigator = () => (
         }
         return <Ionicons name={iconName} size={size} color={color} />;
       },
-      tabBarActiveTintColor: '#1C5D3A',
+      tabBarActiveTintColor: '#8E354A',
       tabBarInactiveTintColor: 'gray',
       tabBarStyle: [
         {
@@ -29,7 +29,7 @@ const BottomTabNavigator = () => (
     })}
   >
     <Tab.Screen name="Explore" component={ExploreScreen} />  
-    <Tab.Screen name="User" component={ProfileScreen} />   
+    <Tab.Screen name="User" component={UserScreen} />   
   </Tab.Navigator>
 );
 
