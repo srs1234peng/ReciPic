@@ -26,11 +26,11 @@ export default function App() {
             headerTintColor: '#fff',
           })}
         >
-          {/* <Stack.Screen 
+          <Stack.Screen 
             name="Explore" 
             component={ExploreScreen} 
             options={{ title: 'Explore' }} 
-          /> */}
+          /> 
           <Stack.Screen 
             name="User" 
             component={UserScreen} 
