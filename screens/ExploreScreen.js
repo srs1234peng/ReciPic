@@ -28,7 +28,7 @@ const ExploreScreen = () => {
           onPress={onTakePhoto}
           style={styles.icon}
         />
-        <Button mode="contained" onPress={onSelectImage}>
+        <Button mode="contained" onPress={onSelectImage} buttonColor="#DB4D6D">
           Upload from Library
         </Button>
         
