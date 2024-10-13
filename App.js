@@ -30,7 +30,7 @@ export default function App() {
             name="Explore" 
             component={ExploreScreen} 
             options={{ title: 'Explore' }} 
-          />
+          /> 
           <Stack.Screen 
             name="User" 
             component={UserScreen} 
