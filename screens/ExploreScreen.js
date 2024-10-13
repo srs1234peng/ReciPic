@@ -5,11 +5,19 @@ import { handleSelectImage, handleTakePhoto } from '../ImageManager';
 
 const ExploreScreen = () => {
     const [images, setImages] = useState([]);
+    const [recognitionResult, setRecognitionResult] = useState(null); // For storing recognition result
+
+    const sendImageForRecognition = async (imageUri) => {
+      
+    };
 
     const onSelectImage = async () => {
       const selectedImages = await handleSelectImage();
       if (selectedImages) {
         setImages(selectedImages);
+        if (selectedImages.length > 0) {
+          sendImageForRecognition(selectedImages[0]);
+        }
       }
     };
   
@@ -17,6 +25,8 @@ const ExploreScreen = () => {
       const takenPhoto = await handleTakePhoto();
       if (takenPhoto) {
         setImages([...images, takenPhoto]);
+        // Automatically send the taken photo for recognition
+        sendImageForRecognition(takenPhoto);
       }
     };
   
