@@ -9,8 +9,8 @@ import RecipeModal from './RecipeModal'; // Modal component to show recipe detai
 
 const ExploreScreen = () => {
   const [images, setImages] = useState([]);
-  const [recognitionResult, setRecognitionResult] = useState(null);
-  const [selectedRecipe, setSelectedRecipe] = useState(null); // For storing the selected recipe to show in the modal
+  const [recognitionResult, setRecognitionResult] = useState([]);
+  const [selectedRecipeIndex, setSelectedRecipeIndex] = useState(0); // Index of the selected recipe
   const [modalVisible, setModalVisible] = useState(false); // Modal visibility state
 
   const compressImage = async (uri) => {
@@ -87,7 +87,7 @@ const ExploreScreen = () => {
         // Now we can safely access `recipes` from the parsed content
         if (parsedContent && Array.isArray(parsedContent.recipes)) {
           setRecognitionResult(parsedContent.recipes); // Update the state with the parsed recipes
-          Alert.alert('Recognition Success', 'Recipes are available.');
+          console.log('Recognition Success: Recipes are available.');
         } else {
           console.log('Unexpected response structure:', result);
           Alert.alert('Error', 'Unexpected response format.');
@@ -100,7 +100,7 @@ const ExploreScreen = () => {
       console.error('Error occurred while sending the image URL:', error);
       Alert.alert('Error', `An error occurred while sending the image: ${error.message}`);
     }
-  };  
+  };
 
   const onSelectImage = async () => {
     console.log('Image selection started...');
@@ -126,10 +126,9 @@ const ExploreScreen = () => {
     }
   };
 
-  // Function to show recipe details in modal
-  const showRecipeDetails = (recipe) => {
-    console.log('Showing recipe details for:', recipe.name);
-    setSelectedRecipe(recipe);
+  const showRecipeDetails = (index) => {
+    console.log('Showing recipe details for index:', index);
+    setSelectedRecipeIndex(index);
     setModalVisible(true);
   };
 
@@ -145,10 +144,10 @@ const ExploreScreen = () => {
           images.map((uri, index) => (
             <View key={index} style={styles.imageWrapper}>
               <Image source={{ uri }} style={styles.image} />
-              {recognitionResult && recognitionResult[index] && (
+              {recognitionResult.length > 0 && (
                 <TouchableOpacity
                   style={styles.recipeButton}
-                  onPress={() => showRecipeDetails(recognitionResult[index])}
+                  onPress={() => showRecipeDetails(index)}
                 >
                   <Text style={styles.buttonText}>Show Recipe Details</Text>
                 </TouchableOpacity>
@@ -160,14 +159,12 @@ const ExploreScreen = () => {
         )}
       </ScrollView>
 
-      {/* Render the Recipe Modal */}
-      {selectedRecipe && (
-        <RecipeModal
-          visible={modalVisible}
-          recipe={selectedRecipe}
-          onClose={() => setModalVisible(false)}
-        />
-      )}
+      <RecipeModal
+        visible={modalVisible}
+        recipes={recognitionResult}
+        selectedRecipeIndex={selectedRecipeIndex}
+        onClose={() => setModalVisible(false)}
+      />
     </View>
   );
 };

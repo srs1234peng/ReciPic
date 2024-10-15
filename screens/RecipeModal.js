@@ -1,32 +1,45 @@
 import React from 'react';
-import { Modal, View, Text, StyleSheet, ScrollView, Button } from 'react-native';
+import { Modal, View, Text, StyleSheet, ScrollView, Button, FlatList } from 'react-native';
 
-const RecipeModal = ({ visible, recipe, onClose }) => {
-  console.log('Displaying recipe in modal:', recipe.name);
+const RecipeModal = ({ visible, recipes, selectedRecipeIndex, onClose }) => {
+  const renderRecipe = ({ item }) => (
+    <View style={styles.modalContent}>
+      <ScrollView>
+        <Text style={styles.recipeTitle}>{item.name}</Text>
+
+        <Text style={styles.sectionTitle}>Ingredients:</Text>
+        {item.ingredients.map((ingredient, index) => (
+          <Text key={index} style={styles.ingredientText}>
+            - {ingredient}
+          </Text>
+        ))}
+
+        <Text style={styles.sectionTitle}>Instructions:</Text>
+        {item.instructions.split('\n').map((instruction, index) => (
+          <Text key={index} style={styles.instructionsText}>
+            {instruction}
+          </Text>
+        ))}
+
+        <Text style={styles.sectionTitle}>Source:</Text>
+        <Text style={styles.sourceText}>{item.source}</Text>
+
+        <Button title="Close" onPress={onClose} color="#DB4D6D" />
+      </ScrollView>
+    </View>
+  );
 
   return (
     <Modal visible={visible} transparent={true} animationType="slide">
       <View style={styles.modalContainer}>
-        <View style={styles.modalContent}>
-          <ScrollView>
-            <Text style={styles.recipeTitle}>{recipe.name}</Text>
-
-            <Text style={styles.sectionTitle}>Ingredients:</Text>
-            {recipe.ingredients.map((ingredient, index) => (
-              <Text key={index} style={styles.ingredientText}>
-                - {ingredient}
-              </Text>
-            ))}
-
-            <Text style={styles.sectionTitle}>Instructions:</Text>
-            <Text style={styles.instructionsText}>{recipe.instructions}</Text>
-
-            <Text style={styles.sectionTitle}>Source:</Text>
-            <Text style={styles.sourceText}>{recipe.source}</Text>
-
-            <Button title="Close" onPress={onClose} color="#DB4D6D" />
-          </ScrollView>
-        </View>
+        <FlatList
+          data={recipes}
+          horizontal
+          pagingEnabled
+          initialScrollIndex={selectedRecipeIndex}
+          renderItem={renderRecipe}
+          keyExtractor={(item, index) => index.toString()}
+        />
       </View>
     </Modal>
   );
@@ -44,6 +57,7 @@ const styles = StyleSheet.create({
     margin: 20,
     borderRadius: 10,
     maxHeight: '80%',
+    width: 300,
   },
   recipeTitle: {
     fontSize: 24,
