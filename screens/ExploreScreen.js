@@ -61,7 +61,7 @@ const ExploreScreen = () => {
     // Send the Firebase Storage URL to the API for recognition
     console.log('Sending image URL to API for recognition:', uploadedUrl);
     try {
-      const response = await fetch('http://45.32.89.216:5000/recommend_file', {
+      const response = await fetch('http://45.32.89.216:5000/recommend_firebase', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -138,13 +138,13 @@ const ExploreScreen = () => {
             <Image key={index} source={{ uri }} style={styles.image} />
           ))
         ) : (
-          <Text>No images selected or taken yet.</Text> // Wrapped in <Text> properly
+          <Text>No images selected or taken yet.</Text>
         )}
       </ScrollView>
 
       {recognitionResult && (
         <View style={styles.recognitionResult}>
-          <Text>Recognition Result: {JSON.stringify(recognitionResult)}</Text>  {/* Ensure it is wrapped in Text */}
+          <Text>Recognition Result: {JSON.stringify(recognitionResult)}</Text>
         </View>
       )}
     </View>
