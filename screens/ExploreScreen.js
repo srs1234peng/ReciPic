@@ -2,57 +2,91 @@ import React, { useState } from 'react';
 import { View, StyleSheet, Image, ScrollView, Alert } from 'react-native';
 import { IconButton, Button, Text } from 'react-native-paper';
 import { handleSelectImage, handleTakePhoto } from '../ImageManager';
+import * as ImageManipulator from 'expo-image-manipulator';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { storage } from '../Firebase/FirebaseSetup';
 
 const ExploreScreen = () => {
   const [images, setImages] = useState([]);
   const [recognitionResult, setRecognitionResult] = useState(null); // For storing recognition result
 
+  const compressImage = async (uri) => {
+    try {
+      console.log('Compressing image...');
+      const manipulatedImage = await ImageManipulator.manipulateAsync(
+        uri,
+        [{ resize: { width: 800 } }], // Resize to 800px width
+        { compress: 0.7, format: ImageManipulator.SaveFormat.JPEG } // Compress to 70% quality
+      );
+      console.log('Compressed image URI:', manipulatedImage.uri);
+      return manipulatedImage.uri;
+    } catch (error) {
+      console.error('Error during image compression:', error);
+      Alert.alert('Error', 'Failed to compress the image.');
+      return null;
+    }
+  };
+
+  const uploadImageToFirebase = async (compressedUri) => {
+    try {
+      const response = await fetch(compressedUri);
+      const blob = await response.blob();
+      console.log(`Compressed Blob size: ${blob.size} Blob type: ${blob.type}`);
+      
+      const storageRef = ref(storage, `images/${Date.now()}.jpeg`); // Unique filename
+      console.log('Uploading image to Firebase Storage...');
+      
+      await uploadBytes(storageRef, blob); // Uploading to Firebase
+      const downloadUrl = await getDownloadURL(storageRef); // Get the URL after upload
+      console.log('Image uploaded successfully:', downloadUrl);
+      return downloadUrl;
+    } catch (error) {
+      console.error('Error uploading image to Firebase:', error);
+      Alert.alert('Upload Error', 'Failed to upload image.');
+      return null;
+    }
+  };
+
   const sendImageForRecognition = async (uri) => {
     console.log('Preparing to send image for recognition...');
-    
-    // Convert the image URI to a Blob
-    const blob = await fetch(uri).then((res) => res.blob());
-    console.log(`Blob size: ${blob.size} Blob type: ${blob.type}`);
 
-    // Create a FormData object
-    const formData = new FormData();
-    console.log('Appending blob to FormData...');
+    // Compress the image before sending
+    const compressedUri = await compressImage(uri);
+    if (!compressedUri) return; // If compression fails, return early
 
-    // Append the Blob to FormData with the correct key 'image' and a file name
-    formData.append('image', blob, 'image.jpeg');  // Ensure proper file name with extension
+    // Upload compressed image to Firebase
+    const uploadedUrl = await uploadImageToFirebase(compressedUri);
+    if (!uploadedUrl) return; // If upload fails, return early
 
-    // Manually log the appended content (you can't directly inspect FormData in React Native)
-    const formDataLog = {};
-    formDataLog['image'] = { blobSize: blob.size, blobType: blob.type, fileName: 'image.jpeg' };
-    console.log('FormData Log:', formDataLog);
-
+    // Send the Firebase Storage URL to the API for recognition
+    console.log('Sending image URL to API for recognition:', uploadedUrl);
     try {
-      console.log('Sending image to API:', uri);
       const response = await fetch('http://45.32.89.216:5000/recommend_file', {
         method: 'POST',
-        body: formData,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ imageUrl: uploadedUrl }),
       });
-    
-      // Log status and response for debugging
+
       console.log(`Response status: ${response.status}`);
-      
-      const responseText = await response.text();  // Use .text() for more visibility of response body
+      const responseText = await response.text();
       console.log(`Response body: ${responseText}`);
-    
+
       if (response.ok) {
-        const result = await response.json();
+        const result = JSON.parse(responseText);
         console.log('Recognition result received:', result);
-        setRecognitionResult(result);  // Update the state with the recognition result
+        setRecognitionResult(result); // Update the state with the recognition result
         Alert.alert('Recognition Success', `Recognition Result: ${JSON.stringify(result)}`);
       } else {
         console.log('Recognition failed with status:', response.status, 'Response:', responseText);
         Alert.alert('Error', `Failed to get a recognition result. Status code: ${response.status}. Response: ${responseText}`);
       }
     } catch (error) {
-      console.error('Error occurred while sending the image:', error);
+      console.error('Error occurred while sending the image URL:', error);
       Alert.alert('Error', `An error occurred while sending the image: ${error.message}`);
     }
-  };  
+  };
 
   const onSelectImage = async () => {
     console.log('Image selection started...');
@@ -97,7 +131,7 @@ const ExploreScreen = () => {
       <Button mode="contained" onPress={onSelectImage} buttonColor="#DB4D6D">
         Upload from Library
       </Button>
-      
+
       <ScrollView contentContainerStyle={styles.imageContainer}>
         {images.length > 0 ? (
           images.map((uri, index) => (
