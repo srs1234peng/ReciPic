@@ -9,32 +9,36 @@ const ExploreScreen = () => {
 
   const sendImageForRecognition = async (uri) => {
     console.log('Preparing to send image for recognition...');
-  
+    
     // Convert the image URI to a Blob
     const blob = await fetch(uri).then((res) => res.blob());
-  
+    console.log(`Blob size: ${blob.size} Blob type: ${blob.type}`);
+
+    // Create a FormData object
     const formData = new FormData();
     console.log('Appending blob to FormData...');
-    
-    // Append the Blob to FormData with the key 'file' and a generic type
-    formData.append('file', blob, 'image.jpeg');  // Using a generic name and type
-  
+
+    // Append the Blob to FormData with the correct key 'image' and a file name
+    formData.append('image', blob, 'image.jpeg');  // Ensure proper file name with extension
+
+    // Manually log the appended content (you can't directly inspect FormData in React Native)
+    const formDataLog = {};
+    formDataLog['image'] = { blobSize: blob.size, blobType: blob.type, fileName: 'image.jpeg' };
+    console.log('FormData Log:', formDataLog);
+
     try {
       console.log('Sending image to API:', uri);
       const response = await fetch('http://45.32.89.216:5000/recommend_file', {
         method: 'POST',
         body: formData,
-        headers: {
-          'Content-Type': 'multipart/form-data',  // Correct form-data headers
-        },
       });
-  
+    
       // Log status and response for debugging
       console.log(`Response status: ${response.status}`);
       
       const responseText = await response.text();  // Use .text() for more visibility of response body
       console.log(`Response body: ${responseText}`);
-  
+    
       if (response.ok) {
         const result = await response.json();
         console.log('Recognition result received:', result);
@@ -49,7 +53,7 @@ const ExploreScreen = () => {
       Alert.alert('Error', `An error occurred while sending the image: ${error.message}`);
     }
   };  
- 
+
   const onSelectImage = async () => {
     console.log('Image selection started...');
     const selectedImages = await handleSelectImage();
