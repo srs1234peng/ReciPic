@@ -165,13 +165,6 @@ const UserScreen = () => {
           <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
             {isLoading ? <ActivityIndicator color='#1C5D3A' /> : <Text style={styles.buttonText}>Log Out</Text>}
           </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.reminderButton}
-            onPress={() => navigation.navigate('NotificationCenter')}
-          >
-            <Text style={styles.buttonText}>Set Reminder</Text>
-          </TouchableOpacity>
         </>
       ) : null}
     </View>
