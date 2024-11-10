@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Animated, Easing, KeyboardAvoidingView, Platform, ScrollView, Keyboard } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Animated, Easing, KeyboardAvoidingView, Platform, ScrollView, Keyboard, Alert } from 'react-native';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../Firebase/FirebaseSetup';
 import styles from '../styles/LogInOutStyle';
@@ -10,7 +10,7 @@ const LoginScreen = ({ navigation }) => {
   const [keyboardVisible, setKeyboardVisible] = useState(false);
 
   const fadeTitleAnim = useRef(new Animated.Value(0)).current;
-  const fadeGroupAnim = useRef(new Animated.Value(0)).current; // Single animation for Login, Inputs, and Button
+  const fadeGroupAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     navigation.setOptions({
@@ -19,15 +19,11 @@ const LoginScreen = ({ navigation }) => {
 
     const keyboardDidShowListener = Keyboard.addListener(
       'keyboardDidShow',
-      () => {
-        setKeyboardVisible(true); // Keyboard is visible
-      }
+      () => setKeyboardVisible(true)
     );
     const keyboardDidHideListener = Keyboard.addListener(
       'keyboardDidHide',
-      () => {
-        setKeyboardVisible(false); // Keyboard is hidden
-      }
+      () => setKeyboardVisible(false)
     );
 
     Animated.sequence([
@@ -51,11 +47,27 @@ const LoginScreen = ({ navigation }) => {
     };
   }, []);
 
+  const handleLogin = () => {
+    if (!email || !password) {
+      Alert.alert('Error', 'Please fill all fields');
+      return;
+    }
+
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        const user = userCredential.user;
+        // Additional login success logic if needed
+      })
+      .catch((error) => {
+        Alert.alert('Failed to log in', error.message);
+      });
+  };
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={{ flex: 1 }}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0} // adjust if necessary
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
     >
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <View style={{ flex: 1, justifyContent: 'center', padding: 16 }}>
@@ -97,30 +109,15 @@ const LoginScreen = ({ navigation }) => {
               />
             </View>
 
-            <TouchableOpacity style={styles.button} onPress={() => {
-              if (!email || !password) {
-                alert('Please fill all fields');
-                return;
-              }
-              signInWithEmailAndPassword(auth, email, password)
-                .then((userCredential) => {
-                  const user = userCredential.user;
-                  // Add any additional logic here
-                })
-                .catch((error) => {
-                  const errorCode = error.code;
-                  const errorMessage = error.message;
-                  alert('Failed to log in');
-                });
-            }}>
+            <TouchableOpacity style={styles.button} onPress={handleLogin}>
               <Text style={styles.buttonText}>Log In</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => navigation.replace('Signup')}>
+            <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
               <Text style={styles.link}>New User? Create an account</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => navigation.replace('ForgotPassword')}>
+            <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
               <Text style={styles.link}>Forgot Password?</Text>
             </TouchableOpacity>
           </Animated.View>
