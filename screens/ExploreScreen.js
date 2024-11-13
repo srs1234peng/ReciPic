@@ -5,6 +5,7 @@ import { handleSelectImage, handleTakePhoto } from '../ImageManager';
 import * as ImageManipulator from 'expo-image-manipulator';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { storage } from '../Firebase/FirebaseSetup';
+import { LinearGradient } from 'expo-linear-gradient';
 import RecipeModal from './RecipeModal'; // Modal component to show recipe details
 
 const ExploreScreen = () => {
@@ -133,39 +134,44 @@ const ExploreScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <IconButton icon="camera" size={50} onPress={onTakePhoto} style={styles.icon} />
-      <Button mode="contained" onPress={onSelectImage} buttonColor="#DB4D6D">
-        Upload from Library
-      </Button>
+    <LinearGradient
+      colors={['#E1A679', '#B5FFFC']} // Add your preferred gradient colors here
+      style={{ flex: 1 }}
+  >
+      <View style={styles.container}>
+        <IconButton icon="camera" size={50} onPress={onTakePhoto} style={styles.icon} />
+        <Button mode="contained" onPress={onSelectImage} buttonColor="#DB4D6D">
+          Upload from Library
+        </Button>
 
-      <ScrollView contentContainerStyle={styles.imageContainer}>
-        {images.length > 0 ? (
-          images.map((uri, index) => (
-            <View key={index} style={styles.imageWrapper}>
-              <Image source={{ uri }} style={styles.image} />
-              {recognitionResult.length > 0 && (
-                <TouchableOpacity
-                  style={styles.recipeButton}
-                  onPress={() => showRecipeDetails(index)}
-                >
-                  <Text style={styles.buttonText}>Show Recipe Details</Text>
-                </TouchableOpacity>
-              )}
-            </View>
-          ))
-        ) : (
-          <Text>No images selected or taken yet.</Text>
-        )}
-      </ScrollView>
+        <ScrollView contentContainerStyle={styles.imageContainer}>
+          {images.length > 0 ? (
+            images.map((uri, index) => (
+              <View key={index} style={styles.imageWrapper}>
+                <Image source={{ uri }} style={styles.image} />
+                {recognitionResult.length > 0 && (
+                  <TouchableOpacity
+                    style={styles.recipeButton}
+                    onPress={() => showRecipeDetails(index)}
+                  >
+                    <Text style={styles.buttonText}>Show Recipe Details</Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+            ))
+          ) : (
+            <Text>No images selected or taken yet.</Text>
+          )}
+        </ScrollView>
 
-      <RecipeModal
-        visible={modalVisible}
-        recipes={recognitionResult}
-        selectedRecipeIndex={selectedRecipeIndex}
-        onClose={() => setModalVisible(false)}
-      />
-    </View>
+        <RecipeModal
+          visible={modalVisible}
+          recipes={recognitionResult}
+          selectedRecipeIndex={selectedRecipeIndex}
+          onClose={() => setModalVisible(false)}
+        />
+      </View>
+    </LinearGradient>
   );
 };
 
