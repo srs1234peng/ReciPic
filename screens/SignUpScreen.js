@@ -51,7 +51,7 @@ const SignupScreen = ({ navigation }) => {
         username: username,
         email: email,
         avatarUrl: "", // Placeholder for avatar URL, can be updated later
-        games: [], // Default empty array or any other fields you need
+        recipes: [], // Default empty array or any other fields you need
       };
 
       // Write new user data to Firestore
@@ -125,7 +125,7 @@ const SignupScreen = ({ navigation }) => {
         )}
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={() => navigation.replace('Login')}>
+      <TouchableOpacity onPress={() => navigation.navigate('Login')}>
         <Text style={styles.link}>Already Registered? Login</Text>
       </TouchableOpacity>
     </View>
