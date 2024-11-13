@@ -233,13 +233,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginVertical: 10,
   },
-  reminderButton: {
-    backgroundColor: '#D3E4CD',
-    padding: 15,
-    borderRadius: 10,
-    alignItems: 'center',
-    width: '100%',
-  },
   buttonText: {
     color: '#1C5D3A',
     fontSize: 18,

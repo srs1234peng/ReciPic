@@ -74,7 +74,7 @@ const LoginScreen = ({ navigation }) => {
           {!keyboardVisible && (
             <>
               <Animated.Text style={[styles.bigtitle, { opacity: fadeTitleAnim }]}>
-                Welcome to Walking Master
+                Welcome to ReciPic!
               </Animated.Text>
               
               <Animated.Text style={[styles.description, { opacity: fadeTitleAnim }]}>
