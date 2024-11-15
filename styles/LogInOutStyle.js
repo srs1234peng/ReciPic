@@ -17,7 +17,7 @@ export default styles = StyleSheet.create({
   description: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#333333',
+    color: 'black',
     marginBottom: 15,
     textAlign: 'left',
     fontFamily: 'Roboto', // Adjust font as needed
@@ -25,7 +25,7 @@ export default styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#1C5D3A',
+    color: '#FB966E',
     textAlign: 'center',
     marginVertical: 10,
   },
@@ -44,7 +44,7 @@ export default styles = StyleSheet.create({
     padding: 10,
   },
   button: {
-    backgroundColor: '#1C5D3A',
+    backgroundColor: '#F75C2F',
     padding: 15,
     borderRadius: 5,
     alignItems: 'center',
@@ -55,7 +55,7 @@ export default styles = StyleSheet.create({
     fontSize: 16,
   },
   link: {
-    color: '#1C5D3A',
+    color: '#FB966E',
     textAlign: 'center',
     marginVertical: 10,
   },

@@ -48,17 +48,18 @@ const SignupScreen = ({ navigation }) => {
 
       // Prepare new user data for Firestore
       const newUser = {
+        uid: user.uid,
         username: username,
         email: email,
         avatarUrl: "", // Placeholder for avatar URL, can be updated later
-        games: [], // Default empty array or any other fields you need
+        recipes: [], // Default empty array or any other fields you need
       };
 
       // Write new user data to Firestore
       await addUser(user.uid, newUser);
 
       Alert.alert("Success", "User registered successfully");
-      navigation.replace("Login"); // Navigate to Login screen or main screen
+      navigation.navigate("Login"); // Navigate to Login screen or main screen
     } catch (error) {
       Alert.alert("Error", error.message);
       console.log(error);
@@ -125,7 +126,7 @@ const SignupScreen = ({ navigation }) => {
         )}
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={() => navigation.replace('Login')}>
+      <TouchableOpacity onPress={() => navigation.navigate('Login')}>
         <Text style={styles.link}>Already Registered? Login</Text>
       </TouchableOpacity>
     </View>
