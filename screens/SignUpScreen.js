@@ -48,6 +48,7 @@ const SignupScreen = ({ navigation }) => {
 
       // Prepare new user data for Firestore
       const newUser = {
+        uid: user.uid,
         username: username,
         email: email,
         avatarUrl: "", // Placeholder for avatar URL, can be updated later
@@ -58,7 +59,7 @@ const SignupScreen = ({ navigation }) => {
       await addUser(user.uid, newUser);
 
       Alert.alert("Success", "User registered successfully");
-      navigation.replace("Login"); // Navigate to Login screen or main screen
+      navigation.navigate("Login"); // Navigate to Login screen or main screen
     } catch (error) {
       Alert.alert("Error", error.message);
       console.log(error);
