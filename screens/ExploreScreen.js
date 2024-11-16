@@ -7,7 +7,7 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { storage } from '../Firebase/FirebaseSetup';
 import RecipeModal from './RecipeModal'; // Modal component to show recipe details
 import { saveKeywordsToHistory, getHistoryKeywords, clearHistory } from '../Components/PreferenceManager';
-import sortRecipesByHistory from '../SortRecipesByHistory'; // Sorting helper function
+import sortRecipesByHistory from '../Components/SortRecipesByHistory'; // Sorting helper function
 
 const ExploreScreen = () => {
   const [images, setImages] = useState([]);
