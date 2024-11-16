@@ -1,19 +1,18 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Image, ScrollView, Alert, TouchableOpacity, Text} from 'react-native';
+import { View, StyleSheet, Image, ScrollView, Alert, TouchableOpacity, Text } from 'react-native';
 import { IconButton, Button } from 'react-native-paper';
 import { handleSelectImage, handleTakePhoto } from '../ImageManager';
 import * as ImageManipulator from 'expo-image-manipulator';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { storage } from '../Firebase/FirebaseSetup';
-import RecipeModal from './RecipeModal'; // Modal component to show recipe details
-import { saveKeywordsToHistory, getHistoryKeywords, clearHistory } from '../Components/PreferenceManager';
+import { saveKeywordsToHistory, clearHistory } from '../Components/PreferenceManager';
 import sortRecipesByHistory from '../Components/SortRecipesByHistory'; // Sorting helper function
+import { useNavigation } from '@react-navigation/native'; // Import navigation hook
 
 const ExploreScreen = () => {
   const [images, setImages] = useState([]);
   const [recognitionResult, setRecognitionResult] = useState([]);
-  const [selectedRecipeIndex, setSelectedRecipeIndex] = useState(0); // Index of the selected recipe
-  const [modalVisible, setModalVisible] = useState(false); // Modal visibility state
+  const navigation = useNavigation(); // Access navigation object
 
   const compressImage = async (uri) => {
     try {
@@ -71,7 +70,7 @@ const ExploreScreen = () => {
           const recipes = parsedContent.recipes;
 
           // Save keywords to local preferences
-          const keywords = recipes.flatMap((recipe) => recipe.keywords);
+          const keywords = recipes.flatMap((recipe) => recipe.keywords || []);
           await saveKeywordsToHistory(keywords);
 
           // Sort recipes by user preferences
@@ -104,9 +103,12 @@ const ExploreScreen = () => {
     }
   };
 
-  const showRecipeDetails = (index) => {
-    setSelectedRecipeIndex(index);
-    setModalVisible(true);
+  const showRecipeList = () => {
+    if (recognitionResult.length > 0) {
+      navigation.navigate('RecipeList', { recipes: recognitionResult });
+    } else {
+      Alert.alert('No Recipes', 'No recipes available to display.');
+    }
   };
 
   const handleClearPreferences = async () => {
@@ -132,9 +134,9 @@ const ExploreScreen = () => {
               {recognitionResult.length > 0 && (
                 <TouchableOpacity
                   style={styles.recipeButton}
-                  onPress={() => showRecipeDetails(index)}
+                  onPress={showRecipeList}
                 >
-                  <Text style={styles.buttonText}>Show Recipe Details</Text>
+                  <Text style={styles.buttonText}>View Recipes</Text>
                 </TouchableOpacity>
               )}
             </View>
@@ -143,13 +145,6 @@ const ExploreScreen = () => {
           <Text>No images selected or taken yet.</Text>
         )}
       </ScrollView>
-
-      <RecipeModal
-        visible={modalVisible}
-        recipes={recognitionResult}
-        selectedRecipeIndex={selectedRecipeIndex}
-        onClose={() => setModalVisible(false)}
-      />
     </View>
   );
 };
