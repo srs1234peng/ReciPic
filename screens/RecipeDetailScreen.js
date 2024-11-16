@@ -1,9 +1,12 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, Alert, TouchableOpacity } from 'react-native';
-import { saveKeywordsToHistory } from '../Components/PreferenceManager'; // Import preference manager
+import { saveKeywordsToHistory, generateKeywords } from '../Components/PreferenceManager'; // Import preference manager
 
 const RecipeDetailScreen = ({ route }) => {
   const { recipe } = route.params; // Retrieve the selected recipe from navigation params
+
+  // Generate keywords dynamically
+  const keywords = recipe.keywords || generateKeywords(recipe);
 
   // Function to handle "Select" action
   const handleSelectRecipe = async () => {
@@ -20,16 +23,15 @@ const RecipeDetailScreen = ({ route }) => {
           text: 'Yes',
           onPress: async () => {
             try {
-              // Save keywords to local preferences
-              if (recipe.keywords && Array.isArray(recipe.keywords)) {
-                await saveKeywordsToHistory(recipe.keywords);
-                Alert.alert('Success', 'Your preference has been saved!');
-              } else {
-                Alert.alert('Error', 'This recipe does not have valid keywords.');
-              }
-            } catch (error) {
-              Alert.alert('Error', 'Failed to save your preference.');
-              console.error('Error saving preferences:', error);
+                if (Array.isArray(keywords) && keywords.length > 0) {
+                  await saveKeywordsToHistory(keywords);
+                  Alert.alert('Success', 'Your preference has been saved!');
+                } else {
+                  Alert.alert('Error', 'Failed to extract keywords.');
+                }
+              } catch (error) {
+                Alert.alert('Error', 'Failed to save your preference.');
+                console.error('Error saving preferences:', error);
             }
           },
         },
