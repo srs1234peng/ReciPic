@@ -9,6 +9,8 @@ const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [keyboardVisible, setKeyboardVisible] = useState(false);
+  const emailInputRef = useRef(null);
+  const passwordInputRef = useRef(null);
 
   const fadeTitleAnim = useRef(new Animated.Value(0)).current;
   const fadeGroupAnim = useRef(new Animated.Value(0)).current;
@@ -65,34 +67,35 @@ const LoginScreen = ({ navigation }) => {
   };
 
   return (
-    <LinearGradient
-      colors={['#E1A679', '#B5FFFC']} // Add your preferred gradient colors here
+    <KeyboardAvoidingView 
       style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-        <View style={{ flex: 1, justifyContent: 'center', padding: 16 }}>
-          {!keyboardVisible && (
-            <>
-              <Animated.Text style={[styles.bigtitle, { opacity: fadeTitleAnim }]}>
-                What Can I Cook Today?
-              </Animated.Text>
-              
-              <Animated.Text style={[styles.description, { opacity: fadeTitleAnim }]}>
-                Log in or sign up to discover your exclusive recipes.
-              </Animated.Text>
-            </>
-          )}
-          
-          <Animated.View style={{ opacity: fadeGroupAnim }}>
-            <Text style={styles.title}>Login</Text>
+      <LinearGradient
+        colors={['#E1A679', '#B5FFFC']} // Add your preferred gradient colors here
+        style={{ flex: 1 }}
+      >
+        <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+          <View style={{ flex: 1, justifyContent: 'center', padding: 16 }}>
+            {!keyboardVisible && (
+              <Animated.View style={{ opacity: fadeTitleAnim }}>
+                <Text style={styles.bigtitle}>
+                  What Can I Cook Today?
+                </Text>
+                
+                <Text style={styles.description}>
+                  Log in or sign up to discover your exclusive recipes.
+                </Text>
+              </Animated.View>
+            )}
             
             <Animated.View style={{ opacity: fadeGroupAnim }}>
               <Text style={styles.title}>Login</Text>
               
               <View style={styles.inputContainer}>
-                <Text style={styles.label} onPress={() => this.emailInput.focus()}>Email Address</Text>
+                <Text style={styles.label} onPress={() => emailInputRef.current.focus()}>Email Address</Text>
                 <TextInput
-                  ref={(input) => { this.emailInput = input }}
+                  ref={emailInputRef}
                   style={styles.input}
                   placeholder="Email"
                   value={email}
@@ -101,9 +104,9 @@ const LoginScreen = ({ navigation }) => {
               </View>
 
               <View style={styles.inputContainer}>
-                <Text style={styles.label} onPress={() => this.passwordInput.focus()}>Password</Text>
+                <Text style={styles.label} onPress={() => passwordInputRef.current.focus()}>Password</Text>
                 <TextInput
-                  ref={(input) => { this.passwordInput = input }}
+                  ref={passwordInputRef}
                   style={styles.input}
                   placeholder="Password"
                   secureTextEntry
@@ -126,8 +129,8 @@ const LoginScreen = ({ navigation }) => {
             </Animated.View>
           </View>
         </ScrollView>
-      </KeyboardAvoidingView>
-    </LinearGradient>
+      </LinearGradient>
+    </KeyboardAvoidingView>
   );
 };
 

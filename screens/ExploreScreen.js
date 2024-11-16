@@ -6,8 +6,9 @@ import * as ImageManipulator from 'expo-image-manipulator';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { storage } from '../Firebase/FirebaseSetup';
 import { saveKeywordsToHistory, clearHistory } from '../Components/PreferenceManager';
-import sortRecipesByHistory from '../Components/SortRecipesByHistory'; // Sorting helper function
+import sortRecipesByHistory from '../Components/sortRecipesByHistory'; // Sorting helper function
 import { useNavigation } from '@react-navigation/native'; // Import navigation hook
+import GradientBackground from '../Components/GradientBackground';
 
 const ExploreScreen = () => {
   const [images, setImages] = useState([]);
