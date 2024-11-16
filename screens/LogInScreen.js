@@ -74,11 +74,11 @@ const LoginScreen = ({ navigation }) => {
           {!keyboardVisible && (
             <>
               <Animated.Text style={[styles.bigtitle, { opacity: fadeTitleAnim }]}>
-                Welcome to Walking Master
+                What Can I Cook Today?
               </Animated.Text>
               
               <Animated.Text style={[styles.description, { opacity: fadeTitleAnim }]}>
-                Log in or sign up to record your adventure.
+                Log in or sign up to discover your exclusive recipes.
               </Animated.Text>
             </>
           )}
