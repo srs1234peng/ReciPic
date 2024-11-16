@@ -8,9 +8,14 @@ const sortRecipesByHistory = async (recipes) => {
     // Add weights to recipes based on keyword frequency in history
     const weightedRecipes = recipes.map((recipe) => {
       let weight = 0;
-      recipe.keywords.forEach((keyword) => {
-        weight += history[keyword] || 0; // Increase weight based on keyword frequency
-      });
+
+      // Check if recipe.keywords is an array
+      if (Array.isArray(recipe.keywords)) {
+        recipe.keywords.forEach((keyword) => {
+          weight += history[keyword] || 0; // Increment weight based on keyword frequency
+        });
+      }
+
       return { ...recipe, weight };
     });
 
