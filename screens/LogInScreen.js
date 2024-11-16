@@ -69,24 +69,22 @@ const LoginScreen = ({ navigation }) => {
       colors={['#E1A679', '#B5FFFC']} // Add your preferred gradient colors here
       style={{ flex: 1 }}
     >
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={{ flex: 1 }}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
-      >
-        <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-          <View style={{ flex: 1, justifyContent: 'center', padding: 16 }}>
-            {!keyboardVisible && (
-              <>
-                <Animated.Text style={[styles.bigtitle, { opacity: fadeTitleAnim }]}>
-                  Welcome to ReciPic!
-                </Animated.Text>
-                
-                <Animated.Text style={[styles.description, { opacity: fadeTitleAnim }]}>
-                  Log in or sign up to record your adventure.
-                </Animated.Text>
-              </>
-            )}
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+        <View style={{ flex: 1, justifyContent: 'center', padding: 16 }}>
+          {!keyboardVisible && (
+            <>
+              <Animated.Text style={[styles.bigtitle, { opacity: fadeTitleAnim }]}>
+                What Can I Cook Today?
+              </Animated.Text>
+              
+              <Animated.Text style={[styles.description, { opacity: fadeTitleAnim }]}>
+                Log in or sign up to discover your exclusive recipes.
+              </Animated.Text>
+            </>
+          )}
+          
+          <Animated.View style={{ opacity: fadeGroupAnim }}>
+            <Text style={styles.title}>Login</Text>
             
             <Animated.View style={{ opacity: fadeGroupAnim }}>
               <Text style={styles.title}>Login</Text>

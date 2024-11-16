@@ -12,6 +12,8 @@ import LoginScreen from './screens/LogInScreen';
 import SignupScreen from './screens/SignUpScreen';
 import ExploreScreen from './screens/ExploreScreen';
 import BottomNavigator from './navigation/BottomNavigator';
+import RecipeListScreen from './screens/RecipeListScreen';
+import RecipeDetailScreen from './screens/RecipeDetailScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -48,6 +50,8 @@ export default function App() {
                   {/* <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} /> */}
                 </>
               )}
+              <Stack.Screen name="RecipeList" component={RecipeListScreen} />
+              <Stack.Screen name="RecipeDetail" component={RecipeDetailScreen} />
             </Stack.Navigator>
           </NavigationContainer>
         </PaperProvider>
