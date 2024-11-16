@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Animated, Easing, KeyboardAvoidingView, Platform, ScrollView, Keyboard, Alert } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient'; // Import LinearGradient
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../Firebase/FirebaseSetup';
 import styles from '../styles/LogInOutStyle';
@@ -64,10 +65,9 @@ const LoginScreen = ({ navigation }) => {
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    <LinearGradient
+      colors={['#E1A679', '#B5FFFC']} // Add your preferred gradient colors here
       style={{ flex: 1 }}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
     >
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <View style={{ flex: 1, justifyContent: 'center', padding: 16 }}>
@@ -86,44 +86,48 @@ const LoginScreen = ({ navigation }) => {
           <Animated.View style={{ opacity: fadeGroupAnim }}>
             <Text style={styles.title}>Login</Text>
             
-            <View style={styles.inputContainer}>
-              <Text style={styles.label} onPress={() => this.emailInput.focus()}>Email Address</Text>
-              <TextInput
-                ref={(input) => { this.emailInput = input }}
-                style={styles.input}
-                placeholder="Email"
-                value={email}
-                onChangeText={setEmail}
-              />
-            </View>
+            <Animated.View style={{ opacity: fadeGroupAnim }}>
+              <Text style={styles.title}>Login</Text>
+              
+              <View style={styles.inputContainer}>
+                <Text style={styles.label} onPress={() => this.emailInput.focus()}>Email Address</Text>
+                <TextInput
+                  ref={(input) => { this.emailInput = input }}
+                  style={styles.input}
+                  placeholder="Email"
+                  value={email}
+                  onChangeText={setEmail}
+                />
+              </View>
 
-            <View style={styles.inputContainer}>
-              <Text style={styles.label} onPress={() => this.passwordInput.focus()}>Password</Text>
-              <TextInput
-                ref={(input) => { this.passwordInput = input }}
-                style={styles.input}
-                placeholder="Password"
-                secureTextEntry
-                value={password}
-                onChangeText={setPassword}
-              />
-            </View>
+              <View style={styles.inputContainer}>
+                <Text style={styles.label} onPress={() => this.passwordInput.focus()}>Password</Text>
+                <TextInput
+                  ref={(input) => { this.passwordInput = input }}
+                  style={styles.input}
+                  placeholder="Password"
+                  secureTextEntry
+                  value={password}
+                  onChangeText={setPassword}
+                />
+              </View>
 
-            <TouchableOpacity style={styles.button} onPress={handleLogin}>
-              <Text style={styles.buttonText}>Log In</Text>
-            </TouchableOpacity>
+              <TouchableOpacity style={styles.button} onPress={handleLogin}>
+                <Text style={styles.buttonText}>Log In</Text>
+              </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
-              <Text style={styles.link}>New User? Create an account</Text>
-            </TouchableOpacity>
+              <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
+                <Text style={styles.link}>New User? Create an account</Text>
+              </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
-              <Text style={styles.link}>Forgot Password?</Text>
-            </TouchableOpacity>
-          </Animated.View>
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+              <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
+                <Text style={styles.link}>Forgot Password?</Text>
+              </TouchableOpacity>
+            </Animated.View>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </LinearGradient>
   );
 };
 

@@ -8,6 +8,7 @@ import { useNavigation } from '@react-navigation/native';
 import Context from '../Context/context';
 import { IconButton, Avatar, ActivityIndicator } from 'react-native-paper';
 import { signOut } from 'firebase/auth';
+import { LinearGradient } from 'expo-linear-gradient';
 import * as ImageManipulator from 'expo-image-manipulator';
 
 const UserScreen = () => {
@@ -145,29 +146,34 @@ const UserScreen = () => {
   }
 
   return (
-    <View style={styles.container}>
-      {user ? (
-        <>
-          <View style={styles.avatarContainer}>
-            <TouchableOpacity style={styles.avatarTouchable} onPress={handleAvatarPress}>
-              {avatarUri ? (
-                <Image source={{ uri: avatarUri }} style={styles.avatar} />
-              ) : (
-                <Avatar.Text size={150} label={username ? username.charAt(0) : "?"} style={styles.avatarIcon} />
-              )}
-              <View style={styles.cameraIconContainer}>
-                <IconButton icon="camera" size={24} style={styles.cameraIcon} />
-              </View>
+    <LinearGradient
+      colors={['#E1A679', '#B5FFFC']} // Add your preferred gradient colors here
+      style={{ flex: 1 }}
+    >
+      <View style={styles.container}>
+        {user ? (
+          <>
+            <View style={styles.avatarContainer}>
+              <TouchableOpacity style={styles.avatarTouchable} onPress={handleAvatarPress}>
+                {avatarUri ? (
+                  <Image source={{ uri: avatarUri }} style={styles.avatar} />
+                ) : (
+                  <Avatar.Text size={150} label={username ? username.charAt(0) : "?"} style={styles.avatarIcon} />
+                )}
+                <View style={styles.cameraIconContainer}>
+                  <IconButton icon="camera" size={24} style={styles.cameraIcon} />
+                </View>
+              </TouchableOpacity>
+            </View>
+            <Text style={styles.userName}>{username}</Text>
+            <Text style={styles.userEmail}>{email}</Text>
+            <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+              {isLoading ? <ActivityIndicator color='#1C5D3A' /> : <Text style={styles.buttonText}>Log Out</Text>}
             </TouchableOpacity>
-          </View>
-          <Text style={styles.userName}>{username}</Text>
-          <Text style={styles.userEmail}>{email}</Text>
-          <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-            {isLoading ? <ActivityIndicator color='#1C5D3A' /> : <Text style={styles.buttonText}>Log Out</Text>}
-          </TouchableOpacity>
-        </>
-      ) : null}
-    </View>
+          </>
+        ) : null}
+      </View>
+    </LinearGradient>
   );
 };
 
@@ -232,13 +238,6 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     marginVertical: 10,
-  },
-  reminderButton: {
-    backgroundColor: '#D3E4CD',
-    padding: 15,
-    borderRadius: 10,
-    alignItems: 'center',
-    width: '100%',
   },
   buttonText: {
     color: '#1C5D3A',
