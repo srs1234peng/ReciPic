@@ -118,35 +118,37 @@ const ExploreScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <IconButton icon="camera" size={50} onPress={onTakePhoto} style={styles.icon} />
-      <Button mode="contained" onPress={onSelectImage} buttonColor="#DB4D6D">
-        Upload from Library
-      </Button>
-      <Button mode="outlined" onPress={handleClearPreferences} style={styles.clearButton}>
-        Clear Preferences
-      </Button>
+    <GradientBackground>
+      <View style={styles.container}>
+        <IconButton icon="camera" size={50} onPress={onTakePhoto} style={styles.icon} />
+        <Button mode="contained" onPress={onSelectImage} buttonColor="#DB4D6D">
+          Upload from Library
+        </Button>
+        <Button mode="outlined" onPress={handleClearPreferences} style={styles.clearButton}>
+          Clear Preferences
+        </Button>
 
-      <ScrollView contentContainerStyle={styles.imageContainer}>
-        {images.length > 0 ? (
-          images.map((uri, index) => (
-            <View key={index} style={styles.imageWrapper}>
-              <Image source={{ uri }} style={styles.image} />
-              {recognitionResult.length > 0 && (
-                <TouchableOpacity
-                  style={styles.recipeButton}
-                  onPress={showRecipeList}
-                >
-                  <Text style={styles.buttonText}>View Recipes</Text>
-                </TouchableOpacity>
-              )}
-            </View>
-          ))
-        ) : (
-          <Text>No images selected or taken yet.</Text>
-        )}
-      </ScrollView>
-    </View>
+        <ScrollView contentContainerStyle={styles.imageContainer}>
+          {images.length > 0 ? (
+            images.map((uri, index) => (
+              <View key={index} style={styles.imageWrapper}>
+                <Image source={{ uri }} style={styles.image} />
+                {recognitionResult.length > 0 && (
+                  <TouchableOpacity
+                    style={styles.recipeButton}
+                    onPress={showRecipeList}
+                  >
+                    <Text style={styles.buttonText}>View Recipes</Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+            ))
+          ) : (
+            <Text>No images selected or taken yet.</Text>
+          )}
+        </ScrollView>
+      </View>
+    </GradientBackground>
   );
 };
 
