@@ -39,8 +39,35 @@ export const clearHistory = async () => {
   }
 };
 
+export const generateKeywords = (recipe) => {
+    const keywords = new Set();
+  
+    // Extract keywords from the recipe name
+    if (recipe.name) {
+      recipe.name.split(' ').forEach((word) => keywords.add(word.toLowerCase()));
+    }
+  
+    // Extract keywords from the ingredients
+    if (Array.isArray(recipe.ingredients)) {
+      recipe.ingredients.forEach((ingredient) => {
+        ingredient.split(' ').forEach((word) => keywords.add(word.toLowerCase()));
+      });
+    }
+  
+    // Optional: Add other fields for keyword extraction, e.g., instructions
+    if (recipe.instructions) {
+      recipe.instructions.split(' ').forEach((word) => keywords.add(word.toLowerCase()));
+    }
+  
+    // Convert the Set to an array and remove common stopwords
+    const stopwords = ['and', 'or', 'with', 'of', 'the', 'a', 'an', 'to', 'in', 'for', 'on', 'at', 'by', 'from', 'as', 'but', 'is', 'are', 'was', 'were'];
+    return Array.from(keywords).filter((word) => !stopwords.includes(word));
+  };
+  
+
 export default {
   saveKeywordsToHistory,
   getHistoryKeywords,
   clearHistory,
+  generateKeywords,
 };
