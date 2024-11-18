@@ -23,15 +23,15 @@ const RecipeDetailScreen = ({ route }) => {
           text: 'Yes',
           onPress: async () => {
             try {
-                if (Array.isArray(keywords) && keywords.length > 0) {
-                  await saveKeywordsToHistory(keywords);
-                  Alert.alert('Success', 'Your preference has been saved!');
-                } else {
-                  Alert.alert('Error', 'Failed to extract keywords.');
-                }
-              } catch (error) {
-                Alert.alert('Error', 'Failed to save your preference.');
-                console.error('Error saving preferences:', error);
+              if (Array.isArray(keywords) && keywords.length > 0) {
+                await saveKeywordsToHistory(keywords);
+                Alert.alert('Success', 'Your preference has been saved!');
+              } else {
+                Alert.alert('Error', 'Failed to extract keywords.');
+              }
+            } catch (error) {
+              Alert.alert('Error', 'Failed to save your preference.');
+              console.error('Error saving preferences:', error);
             }
           },
         },
@@ -49,7 +49,15 @@ const RecipeDetailScreen = ({ route }) => {
         </Text>
       ))}
       <Text style={styles.sectionHeader}>Instructions:</Text>
-      <Text style={styles.text}>{recipe.instructions}</Text>
+      {Array.isArray(recipe.instructions) ? (
+        recipe.instructions.map((step, index) => (
+          <Text key={index} style={styles.text}>
+            {`${index + 1}. ${step}`}
+          </Text>
+        ))
+      ) : (
+        <Text style={styles.text}>{recipe.instructions}</Text>
+      )}
 
       {/* Select Button */}
       <TouchableOpacity style={styles.selectButton} onPress={handleSelectRecipe}>
