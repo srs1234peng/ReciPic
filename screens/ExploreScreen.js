@@ -9,6 +9,7 @@ import { saveKeywordsToHistory, clearHistory } from '../Components/PreferenceMan
 import sortRecipesByHistory from '../Components/sortRecipesByHistory';
 import { useNavigation } from '@react-navigation/native';
 import GradientBackground from '../Components/GradientBackground';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ExploreScreen = () => {
   const [images, setImages] = useState([]);
@@ -84,12 +85,21 @@ const ExploreScreen = () => {
     try {
       console.log('Sending image URLs to backend:', urls);
   
+      // Fetch user preferences from AsyncStorage
+      const storedHistory = await AsyncStorage.getItem('userPreferences');
+      const userPreferences = storedHistory ? JSON.parse(storedHistory) : {};
+  
+      console.log('User preferences:', userPreferences);
+  
       const response = await fetch('http://45.32.89.216:5000/recommend', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ imageUrls: urls }),
+        body: JSON.stringify({
+          imageUrls: urls,
+          preferences: userPreferences, // Include preferences in the request
+        }),
       });
   
       if (response.ok) {
@@ -97,29 +107,11 @@ const ExploreScreen = () => {
         const result = await response.json();
         console.log('Backend response:', result);
   
-        // Combine `db` and `llm` recipes
-        const dbRecipes = result.db || [];
-        const llmRecipes = result.llm || [];
+        // Assuming the backend now returns sorted recipes
+        const sortedRecipes = result.recipes || [];
+        console.log('Sorted recipes from backend:', sortedRecipes);
   
-        // Parse `db` recipes' ingredients and instructions fields from JSON strings
-        const parsedDbRecipes = dbRecipes.map((recipe) => ({
-          ...recipe,
-          ingredients: JSON.parse(recipe.ingredients || '[]'),
-          instructions: JSON.parse(recipe.instructions || '[]'),
-        }));
-  
-        // Combine both sources into one array
-        const allRecipes = [...parsedDbRecipes, ...llmRecipes];
-  
-        console.log('Parsed recipes:', allRecipes);
-  
-        if (allRecipes.length > 0) {
-          // Extract keywords from recipes (if applicable)
-          const keywords = allRecipes.flatMap((recipe) => recipe.keywords || []);
-          await saveKeywordsToHistory(keywords);
-  
-          // Sort recipes by user preferences
-          const sortedRecipes = await sortRecipesByHistory(allRecipes);
+        if (sortedRecipes.length > 0) {
           setRecognitionResult(sortedRecipes);
   
           Alert.alert('Success', 'Recipes have been fetched successfully.');
@@ -135,9 +127,8 @@ const ExploreScreen = () => {
       console.error('Error during recognition:', error);
       Alert.alert('Error', `An error occurred: ${error.message}`);
     }
-  };
+  };  
   
-
   const onSelectImage = async () => {
     const selectedImages = await handleSelectImage();
     if (selectedImages && selectedImages.length > 0) {
