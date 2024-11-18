@@ -4,14 +4,19 @@ import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native
 const RecipeListScreen = ({ navigation, route }) => {
   const { recipes } = route.params;
 
-  const renderRecipeItem = ({ item, index }) => (
-    <TouchableOpacity
-      style={styles.recipeItem}
-      onPress={() => navigation.navigate('RecipeDetail', { recipe: item })}
-    >
-      <Text style={styles.recipeTitle}>{index + 1}. {item.name}</Text>
-    </TouchableOpacity>
-  );
+  const renderRecipeItem = ({ item, index }) => {
+    // Remove quotes from recipe name, if present
+    const recipeName = item.name.replace(/^"|"$/g, ''); // Removes leading and trailing quotes
+
+    return (
+      <TouchableOpacity
+        style={styles.recipeItem}
+        onPress={() => navigation.navigate('RecipeDetail', { recipe: item })}
+      >
+        <Text style={styles.recipeTitle}>{index + 1}. {recipeName}</Text>
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <View style={styles.container}>

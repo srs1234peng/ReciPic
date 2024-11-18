@@ -107,15 +107,27 @@ const ExploreScreen = () => {
         const result = await response.json();
         console.log('Backend response:', result);
   
-        // Assuming the backend now returns sorted recipes
-        const sortedRecipes = result.recipes || [];
-        console.log('Sorted recipes from backend:', sortedRecipes);
+        // Combine `db` and `llm` recipes
+        const dbRecipes = result.db || [];
+        const llmRecipes = result.llm || [];
   
-        if (sortedRecipes.length > 0) {
-          setRecognitionResult(sortedRecipes);
+        // Parse `db` recipes' ingredients and instructions fields from JSON strings
+        const parsedDbRecipes = dbRecipes.map((recipe) => ({
+          ...recipe,
+          ingredients: JSON.parse(recipe.ingredients || '[]'), // Parse JSON string
+          instructions: JSON.parse(recipe.instructions || '[]'), // Parse JSON string
+        }));
   
+        // Combine both sources into one array
+        const allRecipes = [...parsedDbRecipes, ...llmRecipes];
+  
+        console.log('Combined recipes:', allRecipes);
+  
+        // Check if recipes exist
+        if (allRecipes.length > 0) {
+          setRecognitionResult(allRecipes); // Set the combined recipes
           Alert.alert('Success', 'Recipes have been fetched successfully.');
-          navigation.navigate('RecipeList', { recipes: sortedRecipes });
+          navigation.navigate('RecipeList', { recipes: allRecipes }); // Navigate with combined recipes
         } else {
           Alert.alert('No Recipes Found', 'The backend did not return any recipes.');
         }
@@ -127,7 +139,8 @@ const ExploreScreen = () => {
       console.error('Error during recognition:', error);
       Alert.alert('Error', `An error occurred: ${error.message}`);
     }
-  };  
+  };
+  
   
   const onSelectImage = async () => {
     const selectedImages = await handleSelectImage();
