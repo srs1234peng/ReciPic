@@ -6,18 +6,17 @@ import * as ImageManipulator from 'expo-image-manipulator';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { storage } from '../Firebase/FirebaseSetup';
 import { saveKeywordsToHistory, clearHistory } from '../Components/PreferenceManager';
-import sortRecipesByHistory from '../Components/sortRecipesByHistory'; // Sorting helper function
-import { useNavigation } from '@react-navigation/native'; // Import navigation hook
+import sortRecipesByHistory from '../Components/sortRecipesByHistory';
+import { useNavigation } from '@react-navigation/native';
 import GradientBackground from '../Components/GradientBackground';
 
 const ExploreScreen = () => {
   const [images, setImages] = useState([]);
   const [recognitionResult, setRecognitionResult] = useState([]);
-  const navigation = useNavigation(); // Access navigation object
+  const navigation = useNavigation();
 
   const compressImage = async (uri) => {
     try {
-      console.log('Compressing image...');
       const manipulatedImage = await ImageManipulator.manipulateAsync(
         uri,
         [{ resize: { width: 800 } }],
@@ -46,20 +45,34 @@ const ExploreScreen = () => {
     }
   };
 
-  const sendImageForRecognition = async (uri) => {
-    const compressedUri = await compressImage(uri);
-    if (!compressedUri) return;
+  const handleUploadAllImages = async () => {
+    if (images.length === 0) {
+      Alert.alert('No Images', 'Please upload some images before submitting.');
+      return;
+    }
 
-    const uploadedUrl = await uploadImageToFirebase(compressedUri);
-    if (!uploadedUrl) return;
+    const urls = [];
+    for (const uri of images) {
+      const compressedUri = await compressImage(uri);
+      if (compressedUri) {
+        const uploadedUrl = await uploadImageToFirebase(compressedUri);
+        if (uploadedUrl) {
+          urls.push(uploadedUrl);
+        }
+      }
+    }
 
+    sendImagesForRecognition(urls);
+  };
+
+  const sendImagesForRecognition = async (urls) => {
     try {
-      const response = await fetch('http://45.32.89.216:5000/recommend_firebase', {
+      const response = await fetch('http://45.32.89.216:5000/recommend', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ imageUrl: uploadedUrl }),
+        body: JSON.stringify({ imageUrls: urls }),
       });
 
       if (response.ok) {
@@ -70,13 +83,14 @@ const ExploreScreen = () => {
         if (parsedContent && Array.isArray(parsedContent.recipes)) {
           const recipes = parsedContent.recipes;
 
-          // Save keywords to local preferences
           const keywords = recipes.flatMap((recipe) => recipe.keywords || []);
           await saveKeywordsToHistory(keywords);
 
-          // Sort recipes by user preferences
           const sortedRecipes = await sortRecipesByHistory(recipes);
           setRecognitionResult(sortedRecipes);
+
+          Alert.alert('Success', 'Recipes have been fetched successfully.');
+          navigation.navigate('RecipeList', { recipes: sortedRecipes });
         } else {
           Alert.alert('Error', 'Unexpected response format.');
         }
@@ -91,25 +105,19 @@ const ExploreScreen = () => {
   const onSelectImage = async () => {
     const selectedImages = await handleSelectImage();
     if (selectedImages && selectedImages.length > 0) {
-      setImages(selectedImages);
-      sendImageForRecognition(selectedImages[0]);
+      setImages((prevImages) => [...prevImages, ...selectedImages]);
     }
   };
 
   const onTakePhoto = async () => {
     const takenPhoto = await handleTakePhoto();
     if (takenPhoto) {
-      setImages([takenPhoto]);
-      sendImageForRecognition(takenPhoto);
+      setImages((prevImages) => [...prevImages, takenPhoto]);
     }
   };
 
-  const showRecipeList = () => {
-    if (recognitionResult.length > 0) {
-      navigation.navigate('RecipeList', { recipes: recognitionResult });
-    } else {
-      Alert.alert('No Recipes', 'No recipes available to display.');
-    }
+  const handleDeleteImage = (index) => {
+    setImages((prevImages) => prevImages.filter((_, i) => i !== index));
   };
 
   const handleClearPreferences = async () => {
@@ -127,20 +135,21 @@ const ExploreScreen = () => {
         <Button mode="outlined" onPress={handleClearPreferences} style={styles.clearButton}>
           Clear Preferences
         </Button>
+        <Button mode="contained" onPress={handleUploadAllImages} style={styles.uploadButton}>
+          Finish & Submit
+        </Button>
 
         <ScrollView contentContainerStyle={styles.imageContainer}>
           {images.length > 0 ? (
             images.map((uri, index) => (
               <View key={index} style={styles.imageWrapper}>
                 <Image source={{ uri }} style={styles.image} />
-                {recognitionResult.length > 0 && (
-                  <TouchableOpacity
-                    style={styles.recipeButton}
-                    onPress={showRecipeList}
-                  >
-                    <Text style={styles.buttonText}>View Recipes</Text>
-                  </TouchableOpacity>
-                )}
+                <TouchableOpacity
+                  style={styles.deleteButton}
+                  onPress={() => handleDeleteImage(index)}
+                >
+                  <Text style={styles.deleteButtonText}>X</Text>
+                </TouchableOpacity>
               </View>
             ))
           ) : (
@@ -166,6 +175,10 @@ const styles = StyleSheet.create({
     borderColor: '#FF6F61',
     borderWidth: 1,
   },
+  uploadButton: {
+    marginTop: 10,
+    backgroundColor: '#FF6F61',
+  },
   imageContainer: {
     marginTop: 20,
     alignItems: 'center',
@@ -173,19 +186,27 @@ const styles = StyleSheet.create({
   imageWrapper: {
     alignItems: 'center',
     marginBottom: 20,
+    position: 'relative',
   },
   image: {
     width: 200,
     height: 200,
     margin: 10,
   },
-  recipeButton: {
-    backgroundColor: '#FF6F61',
-    padding: 10,
-    borderRadius: 5,
+  deleteButton: {
+    position: 'absolute',
+    top: 5,
+    right: 5,
+    backgroundColor: 'red',
+    borderRadius: 20,
+    width: 30,
+    height: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  buttonText: {
+  deleteButtonText: {
     color: 'white',
+    fontSize: 16,
     fontWeight: 'bold',
   },
 });
