@@ -51,22 +51,37 @@ const ExploreScreen = () => {
       return;
     }
 
-    const urls = [];
-    for (const uri of images) {
-      const compressedUri = await compressImage(uri);
-      if (compressedUri) {
-        const uploadedUrl = await uploadImageToFirebase(compressedUri);
-        if (uploadedUrl) {
-          urls.push(uploadedUrl);
-        }
-      }
-    }
+    // Confirmation prompt
+    Alert.alert(
+      'Confirm Submission',
+      'Are you sure you want to submit all the selected images?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Submit',
+          onPress: async () => {
+            const urls = [];
+            for (const uri of images) {
+              const compressedUri = await compressImage(uri);
+              if (compressedUri) {
+                const uploadedUrl = await uploadImageToFirebase(compressedUri);
+                if (uploadedUrl) {
+                  urls.push(uploadedUrl);
+                }
+              }
+            }
 
-    sendImagesForRecognition(urls);
+            console.log('All uploaded image URLs:', urls);
+            sendImagesForRecognition(urls);
+          },
+        },
+      ]
+    );
   };
 
   const sendImagesForRecognition = async (urls) => {
     try {
+      console.log('Sending image URLs to backend:', urls);
       const response = await fetch('http://45.32.89.216:5000/recommend', {
         method: 'POST',
         headers: {
@@ -76,6 +91,7 @@ const ExploreScreen = () => {
       });
 
       if (response.ok) {
+        console.log('Backend response received.');
         const result = await response.json();
         const contentString = result.choices[0].message.content;
         const parsedContent = JSON.parse(contentString);
