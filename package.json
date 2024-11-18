@@ -30,7 +30,7 @@
     "react-native-axios": "^0.17.1",
     "react-native-dotenv": "^3.4.11",
     "react-native-paper": "^5.12.5",
-    "expo-linear-gradient": "~13.0.2"
+    "expo-linear-gradient": "~14.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2"

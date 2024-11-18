@@ -4,6 +4,7 @@ import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../Firebase/FirebaseSetup';
 import { addUser } from '../Firebase/firestoreHelper';
 import styles from '../styles/LogInOutStyle';
+import GradientBackground from '../Components/GradientBackground'; // Ensure correct import path
 
 const SignupScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -69,67 +70,65 @@ const SignupScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Signup</Text>
+    <GradientBackground>
+      <View style={styles.container}>
+        <Text style={styles.title}>Signup</Text>
 
-      <View style={styles.inputContainer}>
-        <Text style={styles.label} onPress={() => this.usernameInput.focus()}>Username</Text>
-        <TextInput
-          ref={(input) => { this.usernameInput = input }}
-          style={styles.input}
-          placeholder="Username"
-          value={username}
-          onChangeText={setUsername}
-        />
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Username</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Username"
+            value={username}
+            onChangeText={setUsername}
+          />
+        </View>
+
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Email Address</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Email"
+            value={email}
+            onChangeText={setEmail}
+          />
+        </View>
+
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Password</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Password"
+            secureTextEntry
+            value={password}
+            onChangeText={setPassword}
+          />
+        </View>
+
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Confirm Password</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Confirm Password"
+            secureTextEntry
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+          />
+        </View>
+
+        <TouchableOpacity style={styles.button} onPress={handleSignup}>
+          {isLoading ? (
+            <ActivityIndicator color='#1C5D3A' />
+          ) : (
+            <Text style={styles.buttonText}>Register</Text>
+          )}
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+          <Text style={styles.link}>Already Registered? Login</Text>
+        </TouchableOpacity>
       </View>
-
-      <View style={styles.inputContainer}>
-        <Text style={styles.label} onPress={() => this.emailInput.focus()}>Email Address</Text>
-        <TextInput
-          ref={(input) => { this.emailInput = input }}
-          style={styles.input}
-          placeholder="Email"
-          value={email}
-          onChangeText={setEmail}
-        />
-      </View>
-
-      <View style={styles.inputContainer}>
-        <Text style={styles.label} onPress={() => this.passwordInput.focus()}>Password</Text>
-        <TextInput
-          ref={(input) => { this.passwordInput = input }}
-          style={styles.input}
-          placeholder="Password"
-          secureTextEntry
-          value={password}
-          onChangeText={setPassword}
-        />
-      </View>
-
-      <View style={styles.inputContainer}>
-        <Text style={styles.label} onPress={() => this.confirmPasswordInput.focus()}>Confirm Password</Text>
-        <TextInput
-          ref={(input) => { this.confirmPasswordInput = input }}
-          style={styles.input}
-          placeholder="Confirm Password"
-          secureTextEntry
-          value={confirmPassword}
-          onChangeText={setConfirmPassword}
-        />
-      </View>
-
-      <TouchableOpacity style={styles.button} onPress={handleSignup}>
-        {isLoading ? (
-          <ActivityIndicator color='#1C5D3A' />
-        ) : (
-          <Text style={styles.buttonText}>Register</Text>
-        )}
-      </TouchableOpacity>
-
-      <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-        <Text style={styles.link}>Already Registered? Login</Text>
-      </TouchableOpacity>
-    </View>
+    </GradientBackground>
   );
 };
 

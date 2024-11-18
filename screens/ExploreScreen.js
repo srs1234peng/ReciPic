@@ -6,8 +6,9 @@ import * as ImageManipulator from 'expo-image-manipulator';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { storage } from '../Firebase/FirebaseSetup';
 import { saveKeywordsToHistory, clearHistory } from '../Components/PreferenceManager';
-import sortRecipesByHistory from '../Components/SortRecipesByHistory'; // Sorting helper function
+import sortRecipesByHistory from '../Components/sortRecipesByHistory'; // Sorting helper function
 import { useNavigation } from '@react-navigation/native'; // Import navigation hook
+import GradientBackground from '../Components/GradientBackground';
 
 const ExploreScreen = () => {
   const [images, setImages] = useState([]);
@@ -117,35 +118,37 @@ const ExploreScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <IconButton icon="camera" size={50} onPress={onTakePhoto} style={styles.icon} />
-      <Button mode="contained" onPress={onSelectImage} buttonColor="#DB4D6D">
-        Upload from Library
-      </Button>
-      <Button mode="outlined" onPress={handleClearPreferences} style={styles.clearButton}>
-        Clear Preferences
-      </Button>
+    <GradientBackground>
+      <View style={styles.container}>
+        <IconButton icon="camera" size={50} onPress={onTakePhoto} style={styles.icon} />
+        <Button mode="contained" onPress={onSelectImage} buttonColor="#DB4D6D">
+          Upload from Library
+        </Button>
+        <Button mode="outlined" onPress={handleClearPreferences} style={styles.clearButton}>
+          Clear Preferences
+        </Button>
 
-      <ScrollView contentContainerStyle={styles.imageContainer}>
-        {images.length > 0 ? (
-          images.map((uri, index) => (
-            <View key={index} style={styles.imageWrapper}>
-              <Image source={{ uri }} style={styles.image} />
-              {recognitionResult.length > 0 && (
-                <TouchableOpacity
-                  style={styles.recipeButton}
-                  onPress={showRecipeList}
-                >
-                  <Text style={styles.buttonText}>View Recipes</Text>
-                </TouchableOpacity>
-              )}
-            </View>
-          ))
-        ) : (
-          <Text>No images selected or taken yet.</Text>
-        )}
-      </ScrollView>
-    </View>
+        <ScrollView contentContainerStyle={styles.imageContainer}>
+          {images.length > 0 ? (
+            images.map((uri, index) => (
+              <View key={index} style={styles.imageWrapper}>
+                <Image source={{ uri }} style={styles.image} />
+                {recognitionResult.length > 0 && (
+                  <TouchableOpacity
+                    style={styles.recipeButton}
+                    onPress={showRecipeList}
+                  >
+                    <Text style={styles.buttonText}>View Recipes</Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+            ))
+          ) : (
+            <Text>No images selected or taken yet.</Text>
+          )}
+        </ScrollView>
+      </View>
+    </GradientBackground>
   );
 };
 

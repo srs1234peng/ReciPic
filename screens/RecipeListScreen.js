@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 
 const RecipeListScreen = ({ navigation, route }) => {
-  const { recipes } = route.params; // Retrieve the recipes passed from ExploreScreen
+  const { recipes } = route.params;
 
   const renderRecipeItem = ({ item, index }) => (
     <TouchableOpacity
@@ -22,6 +22,7 @@ const RecipeListScreen = ({ navigation, route }) => {
         renderItem={renderRecipeItem}
         contentContainerStyle={styles.listContainer}
       />
+      <Text style={styles.infoText}>Recipes are recommended based on your preferences.</Text>
     </View>
   );
 };
@@ -31,6 +32,12 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     backgroundColor: '#fff',
+  },
+  infoText: {
+    fontSize: 16,
+    color: '#333',
+    marginBottom: 10,
+    textAlign: 'center',
   },
   header: {
     fontSize: 24,
