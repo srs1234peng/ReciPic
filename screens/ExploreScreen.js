@@ -60,6 +60,7 @@ const ExploreScreen = () => {
         {
           text: 'Submit',
           onPress: async () => {
+            console.log('submitting');
             const urls = [];
             for (const uri of images) {
               const compressedUri = await compressImage(uri);
@@ -82,6 +83,7 @@ const ExploreScreen = () => {
   const sendImagesForRecognition = async (urls) => {
     try {
       console.log('Sending image URLs to backend:', urls);
+  
       const response = await fetch('http://45.32.89.216:5000/recommend', {
         method: 'POST',
         headers: {
@@ -89,34 +91,52 @@ const ExploreScreen = () => {
         },
         body: JSON.stringify({ imageUrls: urls }),
       });
-
+  
       if (response.ok) {
         console.log('Backend response received.');
         const result = await response.json();
-        const contentString = result.choices[0].message.content;
-        const parsedContent = JSON.parse(contentString);
-
-        if (parsedContent && Array.isArray(parsedContent.recipes)) {
-          const recipes = parsedContent.recipes;
-
-          const keywords = recipes.flatMap((recipe) => recipe.keywords || []);
+        console.log('Backend response:', result);
+  
+        // Combine `db` and `llm` recipes
+        const dbRecipes = result.db || [];
+        const llmRecipes = result.llm || [];
+  
+        // Parse `db` recipes' ingredients and instructions fields from JSON strings
+        const parsedDbRecipes = dbRecipes.map((recipe) => ({
+          ...recipe,
+          ingredients: JSON.parse(recipe.ingredients || '[]'),
+          instructions: JSON.parse(recipe.instructions || '[]'),
+        }));
+  
+        // Combine both sources into one array
+        const allRecipes = [...parsedDbRecipes, ...llmRecipes];
+  
+        console.log('Parsed recipes:', allRecipes);
+  
+        if (allRecipes.length > 0) {
+          // Extract keywords from recipes (if applicable)
+          const keywords = allRecipes.flatMap((recipe) => recipe.keywords || []);
           await saveKeywordsToHistory(keywords);
-
-          const sortedRecipes = await sortRecipesByHistory(recipes);
+  
+          // Sort recipes by user preferences
+          const sortedRecipes = await sortRecipesByHistory(allRecipes);
           setRecognitionResult(sortedRecipes);
-
+  
           Alert.alert('Success', 'Recipes have been fetched successfully.');
           navigation.navigate('RecipeList', { recipes: sortedRecipes });
         } else {
-          Alert.alert('Error', 'Unexpected response format.');
+          Alert.alert('No Recipes Found', 'The backend did not return any recipes.');
         }
       } else {
+        console.error('Error from backend:', response.status);
         Alert.alert('Error', `Recognition failed. Status code: ${response.status}`);
       }
     } catch (error) {
+      console.error('Error during recognition:', error);
       Alert.alert('Error', `An error occurred: ${error.message}`);
     }
   };
+  
 
   const onSelectImage = async () => {
     const selectedImages = await handleSelectImage();
