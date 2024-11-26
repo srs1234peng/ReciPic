@@ -4,16 +4,17 @@ import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native
 const RecipeListScreen = ({ navigation, route }) => {
   const { recipes } = route.params;
 
-  const renderRecipeItem = ({ item, index }) => {
-    // Remove quotes from recipe name, if present
-    const recipeName = item.name.replace(/^"|"$/g, ''); // Removes leading and trailing quotes
-
+  const renderRecipeItem = ({ item }) => {
+    const isFromDB = item.source === 'db';
     return (
       <TouchableOpacity
         style={styles.recipeItem}
         onPress={() => navigation.navigate('RecipeDetail', { recipe: item })}
       >
-        <Text style={styles.recipeTitle}>{index + 1}. {recipeName}</Text>
+        <Text style={styles.recipeTitle}>
+          {item.name} {isFromDB ? "(DB)" : ""}
+        </Text>
+        <Text style={styles.sourceText}>Source: {item.source.toUpperCase()}</Text>
       </TouchableOpacity>
     );
   };
@@ -27,7 +28,7 @@ const RecipeListScreen = ({ navigation, route }) => {
         renderItem={renderRecipeItem}
         contentContainerStyle={styles.listContainer}
       />
-      <Text style={styles.infoText}>Recipes are recommended based on your preferences.</Text>
+       <Text style={styles.infoText}>Recipes are recommended based on your preferences.</Text>
     </View>
   );
 };
@@ -37,12 +38,6 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     backgroundColor: '#fff',
-  },
-  infoText: {
-    fontSize: 16,
-    color: '#333',
-    marginBottom: 10,
-    textAlign: 'center',
   },
   header: {
     fontSize: 24,
@@ -63,6 +58,11 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  sourceText: {
+    fontSize: 14,
+    color: '#666',
+    fontStyle: 'italic',
   },
 });
 

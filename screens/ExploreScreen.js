@@ -116,6 +116,7 @@ const ExploreScreen = () => {
           ...recipe,
           ingredients: JSON.parse(recipe.ingredients || '[]'), // Parse JSON string
           instructions: JSON.parse(recipe.instructions || '[]'), // Parse JSON string
+          source: 'db', // Add a source field to distinguish between `db` and `llm` recipes
         }));
   
         // Combine both sources into one array
