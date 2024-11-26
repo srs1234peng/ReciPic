@@ -31,7 +31,7 @@ This mobile application allows users to upload images of food items and receive 
 ### Installing Dependencies
 
 Clone the repository and install the dependencies:
-git clone https://yourrepositorylink.com/project.git 
+git clone https://github.com/srs1234peng/ReciPic.git 
 cd project 
 npm install
 
