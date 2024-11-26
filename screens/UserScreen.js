@@ -126,10 +126,10 @@ const UserScreen = () => {
       await signOut(auth);
       setUser(null);
       Alert.alert('Success', 'User logged out successfully');
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'Login' }],
-      });
+      // navigation.reset({
+      //   index: 0,
+      //   routes: [{ name: 'Login' }],
+      // });
     } catch (error) {
       console.error('Error logging out:', error);
       Alert.alert('Error', error.message);

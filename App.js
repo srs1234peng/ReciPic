@@ -34,24 +34,21 @@ export default function App() {
         <PaperProvider>
           <NavigationContainer>
             <Stack.Navigator>
-              {isUserAuthenticated ? (
-                <>
+              {isUserAuthenticated ? <>
                   <Stack.Screen
-                    name="bottom"
+                    name="BottomNavigator"
                     component={BottomNavigator}
                     options={{ headerShown: false }}
                   />
                   <Stack.Screen name="Explore" component={ExploreScreen} />
-                </>
-              ) : (
-                <>
+                  <Stack.Screen name="RecipeList" component={RecipeListScreen} />
+                  <Stack.Screen name="RecipeDetail" component={RecipeDetailScreen} />
+                  </> : <>
                   <Stack.Screen name="Login" component={LoginScreen} />
                   <Stack.Screen name="Signup" component={SignupScreen} />
                   {/* <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} /> */}
                 </>
-              )}
-              <Stack.Screen name="RecipeList" component={RecipeListScreen} />
-              <Stack.Screen name="RecipeDetail" component={RecipeDetailScreen} />
+              }
             </Stack.Navigator>
           </NavigationContainer>
         </PaperProvider>
