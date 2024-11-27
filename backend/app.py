@@ -133,6 +133,8 @@ def recognize_image_yolo(image, img_size=640, conf_threshold=0.3):
     return list(set(map(lambda c: c.replace('-', ' '), detected_classes)))
 
 def find_recipes_in_db(ingredients_list):
+    if len(ingredients_list) == 0:
+        return []
     query = "SELECT * FROM recipes WHERE ingredients MATCH ?"
     ingredients_str = " ".join(ingredients_list).replace('-', ' ')
     cur = conn.cursor()
@@ -149,8 +151,8 @@ async def recommend_recipe():
     print(urls)
     ingredients = set()
     for url in urls:
-        ingredients.add(recognize_image_yolo(Image.open(requests.get(url, stream=True).raw)))
-        #ingredients.union(recognize_image_yolo(Image.open(requests.get(url, stream=True).raw)))
+        #ingredients.add(recognize_image(Image.open(requests.get(url, stream=True).raw)))
+        ingredients.union(recognize_image_yolo(Image.open(requests.get(url, stream=True).raw)))
         print(f'Recognition results: {ingredients}')
     def compare(a):
         a_str = json.dumps(a)
